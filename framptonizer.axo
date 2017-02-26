@@ -1,0 +1,58 @@
+<objdefs appVersion="1.0.12">
+   <obj.normal id="framptonizer" uuid="deadbeef-288e-4049-9f91-deadbeef3349">
+      <sDescription>Talkbox/Vocoder patch, adapted from:  https://github.com/gerasim13/mda-VST-plug-ins/blob/master/mda-au/mda/Talkbox/talkbox.cpp</sDescription>
+      <author>dvxr</author>
+      <license>GPL</license>
+      <helpPatch>framptonizer.axh</helpPatch>
+      <inlets>
+         <frac32 name="input1"/>
+         <frac32 name="input 2"/>
+      </inlets>
+      <outlets>
+         <frac32 name="output"/>
+      </outlets>
+      <displays/>
+      <params/>
+      <attribs/>
+      <code.declaration><![CDATA[long BUF_MAX;
+
+float emphasis;
+long K, N, O, pos;
+float wet, dry, FX;
+
+float d0, d1, d2, d3, d4;
+float u0, u1, u2, u3, u4;  
+
+#define BUF_MAX 783
+#define NUM_FRAMES 16
+
+float buf0[BUF_MAX];
+float buf1[BUF_MAX];
+float window[BUF_MAX];
+float car0[BUF_MAX];
+float car1[BUF_MAX];]]></code.declaration>
+      <code.init><![CDATA[N = 1;
+
+// reset state
+pos = K = 0;
+emphasis = 0.0f;
+FX = 0.0f;
+
+u0 = u1 = u2 = u3 = u4 = 0.0f;
+d0 = d1 = d2 = d3 = d4 = 0.0f;
+
+memset(buf0, 0, BUF_MAX * sizeof(float));
+memset(buf1, 0, BUF_MAX * sizeof(float));
+memset(window, 0, BUF_MAX * sizeof(float));
+memset(car0, 0, BUF_MAX * sizeof(float));
+memset(car1, 0, BUF_MAX * sizeof(float));
+
+float dp = TWO_PI / (float)BUF_MAX;
+float p = 0.0f;
+for (int n=0; n<BUF_MAX; n++)
+{
+  window[n] = 0.5f - 0.5f * (float)cos(p);
+  p += dp;
+}]]></code.init>
+   </obj.normal>
+</objdefs>
