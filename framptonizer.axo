@@ -12,12 +12,16 @@
          <frac32 name="output"/>
       </outlets>
       <displays/>
-      <params/>
+      <params>
+         <frac32.u.map name="wet"/>
+         <frac32.u.map name="dry"/>
+         <frac32.u.map name="quality"/>
+      </params>
       <attribs/>
       <code.declaration><![CDATA[long BUF_MAX;
 
 float emphasis;
-long K, N, O, pos;
+long K, N, n, O, pos;
 float wet, dry, FX;
 
 float d0, d1, d2, d3, d4;
@@ -30,7 +34,11 @@ float buf0[BUF_MAX];
 float buf1[BUF_MAX];
 float window[BUF_MAX];
 float car0[BUF_MAX];
-float car1[BUF_MAX];]]></code.declaration>
+float car1[BUF_MAX];
+
+float dp;
+float p;
+float sample_rate;]]></code.declaration>
       <code.init><![CDATA[N = 1;
 
 // reset state
@@ -47,12 +55,64 @@ memset(window, 0, BUF_MAX * sizeof(float));
 memset(car0, 0, BUF_MAX * sizeof(float));
 memset(car1, 0, BUF_MAX * sizeof(float));
 
-float dp = TWO_PI / (float)BUF_MAX;
-float p = 0.0f;
+dp = TWO_PI / (float)BUF_MAX;
+n  = BUF_MAX;
+
+sample_rate = 48000;
+
+p = 0.0f;
 for (int n=0; n<BUF_MAX; n++)
 {
   window[n] = 0.5f - 0.5f * (float)cos(p);
   p += dp;
 }]]></code.init>
+      <code.krate><![CDATA[O = (long)((0.0001f + 0.000004f * GetParameter(_QUAL)) * sample_rate);
+
+
+
+
+  float wet = 0.00707f * GetParameter(_WET);  wet *= wet;
+  float dry = 0.01410f * GetParameter(_DRY);  dry *= dry;
+  
+  long  p0=pos, p1 = (pos + N/2) % N;
+  float e=emphasis, w, o, x, dr, fx=FX;
+  float p, q, h0=0.3f, h1=0.77f;
+  
+  for (int i=0; i<16; i++)
+  {
+    o = *in1;  in1++;
+    x = *in2;  in2++;
+    dr = o;
+
+    p = d0 + h0 *  x; d0 = d1;  d1 = x  - h0 * p;
+    q = d2 + h1 * d4; d2 = d3;  d3 = d4 - h1 * q;
+    d4 = x;
+    x = p + q;
+
+    if(K++)
+    {
+       K = 0;
+       car0[p0] = car1[p1] = x; //carrier input
+       x = o - e;  e = o;  //6dB/oct pre-emphasis
+
+       w = window[p0]; fx = buf0[p0] * w;  buf0[p0] = x * w;  //50% overlapping hanning windows
+       if(++p0 >= N) { lpc(buf0, car0, N, O);  p0 = 0; }
+
+       w = 1.0f - w;  fx += buf1[p1] * w;  buf1[p1] = x * w;
+       if(++p1 >= N) { lpc(buf1, car1, N, O);  p1 = 0; }
+    }
+
+    p = u0 + h0 * fx; u0 = u1;  u1 = fx - h0 * p;
+    q = u2 + h1 * u4; u2 = u3;  u3 = u4 - h1 * q;  
+    u4 = fx;
+    x = p + q;
+
+    o = wet * x + dry * dr;
+    *out = o;  out++;
+  }
+  emphasis = e;
+  pos = p0;
+  FX = fx;
+}]]></code.krate>
    </obj.normal>
 </objdefs>
