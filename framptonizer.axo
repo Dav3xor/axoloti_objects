@@ -28,7 +28,7 @@ float d0, d1, d2, d3, d4;
 float u0, u1, u2, u3, u4;  
 
 #define BUF_MAX 783
-#define NUM_FRAMES 16
+
 
 float buf0[BUF_MAX];
 float buf1[BUF_MAX];
@@ -38,7 +38,12 @@ float car1[BUF_MAX];
 
 float dp;
 float p;
-float sample_rate;]]></code.declaration>
+float sample_rate;
+float wet, dry;
+
+long p0, p1;
+float e, w, o, x, dr, fx;
+float p, q, h0, h1;]]></code.declaration>
       <code.init><![CDATA[N = 1;
 
 // reset state
@@ -71,14 +76,17 @@ for (int n=0; n<BUF_MAX; n++)
 
 
 
-  float wet = 0.00707f * GetParameter(_WET);  wet *= wet;
-  float dry = 0.01410f * GetParameter(_DRY);  dry *= dry;
+  wet = 0.00707f * GetParameter(_WET);  wet *= wet;
+  dry = 0.01410f * GetParameter(_DRY);  dry *= dry;
+
+  p0 = pos;
+  p1 = (pos + N/2) % N;
+  e  =emphasis;
+  fx =FX;
+  h0=0.3f;
+  h1=0.77f;
   
-  long  p0=pos, p1 = (pos + N/2) % N;
-  float e=emphasis, w, o, x, dr, fx=FX;
-  float p, q, h0=0.3f, h1=0.77f;
-  
-  for (int i=0; i<16; i++)
+  for (int i=0; i<BUFSIZE; i++)
   {
     o = *in1;  in1++;
     x = *in2;  in2++;
