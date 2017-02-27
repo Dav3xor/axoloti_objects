@@ -76,8 +76,8 @@ for (int n=0; n<BUF_MAX; n++)
 
 
 
-  wet = 0.00707f * GetParameter(_WET);  wet *= wet;
-  dry = 0.01410f * GetParameter(_DRY);  dry *= dry;
+  wet = 0.00707f * (param_wet/134217728.0f/64.0f*100.0f);  wet *= wet;
+  dry = 0.01410f * (param_dry/134217728.0f/64.0f*100.0f);  dry *= dry;
 
   p0 = pos;
   p1 = (pos + N/2) % N;
