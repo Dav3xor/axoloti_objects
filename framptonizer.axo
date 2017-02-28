@@ -9,7 +9,7 @@
          <frac32 name="input 2"/>
       </inlets>
       <outlets>
-         <frac32 name="output"/>
+         <frac32 name="out"/>
       </outlets>
       <displays/>
       <params>
@@ -116,7 +116,7 @@ for (int n=0; n<BUF_MAX; n++)
     x = p + q;
 
     o = wet * x + dry * dr;
-    *out = o;  out++;
+    outlet_out[i] = float_to_q27(0) out++;
   }
   emphasis = e;
   pos = p0;
