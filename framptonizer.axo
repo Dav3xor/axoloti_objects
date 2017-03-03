@@ -5,11 +5,11 @@
       <license>GPL</license>
       <helpPatch>framptonizer.axh</helpPatch>
       <inlets>
-         <frac32 name="input1"/>
-         <frac32 name="input 2"/>
+         <frac32.bipolar name="input1"/>
+         <frac32.bipolar name="input2"/>
       </inlets>
       <outlets>
-         <frac32 name="out"/>
+         <frac32.bipolar name="out"/>
       </outlets>
       <displays/>
       <params>
@@ -28,7 +28,11 @@ float d0, d1, d2, d3, d4;
 float u0, u1, u2, u3, u4;  
 
 #define BUF_MAX 783
+#define ORD_MAX 50
 
+#define TWO_PI     6.28318530717958647692528676655901f
+const double BUF_MAX_SECONDS = 0.01633;
+const double MIN_SUPPORTED_SAMPLE_RATE = 8000.0;
 
 float buf0[BUF_MAX];
 float buf1[BUF_MAX];
@@ -37,9 +41,9 @@ float car0[BUF_MAX];
 float car1[BUF_MAX];
 
 float dp;
-float p;
+
 float sample_rate;
-float wet, dry;
+
 
 long p0, p1;
 float e, w, o, x, dr, fx;
@@ -105,7 +109,7 @@ void lpc_durbin(float *r, int p, float *k, float *g)
   }
 
   if(e < 1.0e-20f) e = 0.0f;
-  *g = (float)sqrt(e);
+  *g = (float)_VSQRTF(e);
 }]]></code.declaration>
       <code.init><![CDATA[N = 1;
 
@@ -134,7 +138,7 @@ for (int n=0; n<BUF_MAX; n++)
   window[n] = 0.5f - 0.5f * (float)cos(p);
   p += dp;
 }]]></code.init>
-      <code.krate><![CDATA[O = (long)((0.0001f + 0.000004f * GetParameter(_QUAL)) * sample_rate);
+      <code.krate><![CDATA[O = (long)((0.0001f + 0.000004f * 90.0f) * sample_rate);
 
 
 
@@ -148,11 +152,12 @@ for (int n=0; n<BUF_MAX; n++)
   fx =FX;
   h0=0.3f;
   h1=0.77f;
-  
-  for (int i=0; i<BUFSIZE; i++)
+
+  long i;
+  for (i=0; i<BUFSIZE; i++)
   {
-    o = q27_to_float(inlet_in1[i]);
-    x = q27_to_float(inlet_in2[i]);
+    o = q27_to_float((&inlet_input1)[i]);
+    x = q27_to_float((&inlet_input2)[i]);
     dr = o;
 
     p = d0 + h0 *  x; d0 = d1;  d1 = x  - h0 * p;
@@ -179,11 +184,10 @@ for (int n=0; n<BUF_MAX; n++)
     x = p + q;
 
     o = wet * x + dry * dr;
-    outlet_out[i] = float_to_q27(0) out++;
+    (&outlet_out)[i] = float_to_q27(o);
   }
   emphasis = e;
   pos = p0;
-  FX = fx;
-}]]></code.krate>
+  FX = fx;]]></code.krate>
    </obj.normal>
 </objdefs>
