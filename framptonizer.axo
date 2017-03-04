@@ -30,7 +30,7 @@ float u0, u1, u2, u3, u4;
 #define BUF_MAX 783
 #define ORD_MAX 50
 
-#define TWO_PI     6.28318530717958647692528676655901f
+#define TWO_PI     6.2831f
 const double BUF_MAX_SECONDS = 0.01633;
 const double MIN_SUPPORTED_SAMPLE_RATE = 8000.0;
 
@@ -135,7 +135,7 @@ sample_rate = 48000;
 p = 0.0f;
 for (int n=0; n<BUF_MAX; n++)
 {
-  window[n] = 0.5f - 0.5f * (float)cos(p);
+  window[n] = 0.5f - 0.5f * (float)cosf(p);
   p += dp;
 }]]></code.init>
       <code.krate><![CDATA[O = (long)((0.0001f + 0.000004f * 90.0f) * sample_rate);
@@ -143,8 +143,8 @@ for (int n=0; n<BUF_MAX; n++)
 
 
 
-  wet = 0.00707f * (q27_to_float(param_wet)/64.0f*100.0f);  wet *= wet;
-  dry = 0.01410f * (q27_to_float(param_dry)/64.0f*100.0f);  dry *= dry;
+  wet = 0.00707f * 100.0f; /*(q27_to_float(param_wet)/64.0f*100.0f);*/  wet *= wet;
+  dry = 0.01410f * 100.0f; /*(q27_to_float(param_dry)/64.0f*100.0f)*/;  dry *= dry;
 
   p0 = pos;
   p1 = (pos + N/2) % N;
