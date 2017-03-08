@@ -5,11 +5,11 @@
       <license>GPL</license>
       <helpPatch>framptonizer.axh</helpPatch>
       <inlets>
-         <frac32.bipolar name="input1"/>
-         <frac32.bipolar name="input2"/>
+         <frac32buffer name="input1"/>
+         <frac32buffer name="input2"/>
       </inlets>
       <outlets>
-         <frac32.bipolar name="out"/>
+         <frac32buffer name="out"/>
       </outlets>
       <displays/>
       <params>
@@ -156,8 +156,8 @@ for (int n=0; n<BUF_MAX; n++)
   long i;
   for (i=0; i<BUFSIZE; i++)
   {
-    o = q27_to_float((&inlet_input1)[i]);
-    x = q27_to_float((&inlet_input2)[i]);
+    o = q27_to_float(inlet_input1[i]);
+    x = q27_to_float(inlet_input2[i]);
     dr = o;
 
     p = d0 + h0 *  x; d0 = d1;  d1 = x  - h0 * p;
@@ -184,7 +184,8 @@ for (int n=0; n<BUF_MAX; n++)
     x = p + q;
 
     o = wet * x + dry * dr;
-    (&outlet_out)[i] = float_to_q27(o);
+    outlet_out[i] = float_to_q27(o);
+    //outlet_out[i] = inlet_input1[i];
   }
   emphasis = e;
   pos = p0;
