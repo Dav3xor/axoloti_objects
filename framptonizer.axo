@@ -184,8 +184,8 @@ for (int n=0; n<BUF_MAX; n++)
     x = p + q;
 
     o = wet * x + dry * dr;
-    outlet_out[i] = float_to_q27(o);
-    //outlet_out[i] = inlet_input1[i];
+    //outlet_out[i] = float_to_q27(o);
+    outlet_out[i] = inlet_input1[i];
   }
   emphasis = e;
   pos = p0;
