@@ -141,10 +141,10 @@ for (int n=0; n<BUF_MAX; n++)
       <code.krate><![CDATA[O = (long)((0.0001f + 0.000004f * 90.0f) * sample_rate);
 
 
+  
 
-
-  wet = 0.00707f * 100.0f; /*(q27_to_float(param_wet)/64.0f*100.0f);*/  wet *= wet;
-  dry = 0.01410f * 100.0f; /*(q27_to_float(param_dry)/64.0f*100.0f)*/;  dry *= dry;
+  wet = 0.00707f * (q27_to_float(param_wet)*1.5625);  wet *= wet;
+  dry = 0.01410f * (q27_to_float(param_dry)*1.5625);  dry *= dry;
 
   p0 = pos;
   p1 = (pos + N/2) % N;
