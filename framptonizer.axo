@@ -156,8 +156,8 @@ for (int n=0; n<BUF_MAX; n++)
   long i;
   for (i=0; i<BUFSIZE; i++)
   {
-    o = q27_to_float(inlet_input1[i]);
-    x = q27_to_float(inlet_input2[i]);
+    o = q27_to_float(inlet_input1[i])/2.0;
+    x = q27_to_float(inlet_input2[i])/2.0;
     dr = o;
 
     p = d0 + h0 *  x; d0 = d1;  d1 = x  - h0 * p;
@@ -184,8 +184,8 @@ for (int n=0; n<BUF_MAX; n++)
     x = p + q;
 
     o = wet * x + dry * dr;
-    //outlet_out[i] = float_to_q27(o);
-    outlet_out[i] = inlet_input1[i];
+    outlet_out[i] = float_to_q27(o*64.0);
+    //outlet_out[i] = inlet_input1[i];
   }
   emphasis = e;
   pos = p0;
