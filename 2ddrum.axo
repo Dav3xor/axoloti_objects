@@ -1,9 +1,9 @@
 <objdefs appVersion="1.0.12">
-   <obj.normal id="framptonizer" uuid="deadbeff-288e-4049-9f91-deadbeff3349">
+   <obj.normal id="2ddrum" uuid="deadbeff-288e-4049-9f91-deadbeff3349">
       <sDescription>Talkbox/Vocoder patch, adapted from:  https://github.com/gerasim13/mda-VST-plug-ins/blob/master/mda-au/mda/Talkbox/talkbox.cpp</sDescription>
       <author>dvxr</author>
       <license>GPL</license>
-      <helpPatch>framptonizer.axh</helpPatch>
+      <helpPatch>2ddrum.axh</helpPatch>
       <inlets>
          <frac32buffer name="input1"/>
          <frac32buffer name="input2"/>
