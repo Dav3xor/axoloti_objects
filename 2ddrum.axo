@@ -5,9 +5,9 @@
       <license>GPL</license>
       <helpPatch>2ddrum.axh</helpPatch>
       <inlets>
-         <frac32 name="upper_left"/>
-         <frac32 name="upper_right"/>
-         <frac32 name="lower_left"/>
+         <frac32 name="ul"/>
+         <frac32 name="ur"/>
+         <frac32 name="ll"/>
          <frac32 name="lower_right"/>
       </inlets>
       <outlets>
@@ -19,22 +19,25 @@
       <displays/>
       <params/>
       <attribs/>
-      <code.declaration><![CDATA[#inlet_upper_left
-#inlet_upper_right
-#inlet_lower_left
-#inlet_lower_right
+      <code.declaration><![CDATA[//inlet_upper_left
+//inlet_upper_right
+//inlet_lower_left
+//inlet_lower_right
 
-#outlet_xpos
-#outlet_ypos
-#outlet_level
-#outlet_trigger
+//outlet_xpos
+//outlet_ypos
+//outlet_level
+//outlet_trigger
 
 class FIR
 {
 	public:
 		FIR() {
 			pos = 0;
-			memcpy(buffer,0,16);
+			int i;
+			for(i=0;i<16;i++){
+				buffer[i]=0;
+			}
 		}
 		void add_val(int32_t newval) {
 			buffer[pos] = newval;
@@ -43,7 +46,7 @@ class FIR
 		int32_t cur_val(void) {
 			uint32_t i;
 			uint64_t sum = 0;
-			for(i = 15; i >= 0; i--) {
+			for(i = 0; i < 16; i++) {
 				sum += buffer[i];
 			}
 			return (sum/16);
@@ -58,7 +61,7 @@ FIR ul;
 FIR ur;
 FIR ll;
 FIR lr;]]></code.declaration>
-      <code.krate><![CDATA[ul.add_val(inlet_upper_left);
-outlet_level = ul.get_val();]]></code.krate>
+      <code.krate><![CDATA[ul.add_val(inlet_ul);
+outlet_level = ul.cur_val();]]></code.krate>
    </obj.normal>
 </objdefs>
