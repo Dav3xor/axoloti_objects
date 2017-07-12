@@ -8,7 +8,7 @@
          <frac32 name="ul"/>
          <frac32 name="ur"/>
          <frac32 name="ll"/>
-         <frac32 name="lower_right"/>
+         <frac32 name="lr"/>
       </inlets>
       <outlets>
          <frac32 name="xpos"/>
@@ -61,7 +61,10 @@ FIR ul;
 FIR ur;
 FIR ll;
 FIR lr;]]></code.declaration>
-      <code.krate><![CDATA[ul.add_val(inlet_ul);
-outlet_level = ul.cur_val();]]></code.krate>
+      <code.krate><![CDATA[ul.add_val(inlet_ul*3);
+ur.add_val(inlet_ur*3);
+ll.add_val(inlet_ll*3);
+lr.add_val(inlet_lr*3);
+outlet_level = (ul.cur_val() + ur.cur_val() + ll.cur_val() + lr.cur_val())/5;]]></code.krate>
    </obj.normal>
 </objdefs>
